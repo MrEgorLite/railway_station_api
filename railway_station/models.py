@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
 class TrainType(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
@@ -34,7 +37,7 @@ class Crew(models.Model):
 
 
 class Station(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     latitude = models.FloatField()
     longitude = models.FloatField()
 
@@ -51,6 +54,32 @@ class Route(models.Model):
     )
     distance = models.IntegerField()
 
+    @staticmethod
+    def validate(source: str, destination: str, distance: int, exception: Exception()) -> None:
+        if source == destination:
+            raise exception("source and destination routes cannot be the same")
+        if distance <= 0:
+            raise exception("distance must be greater than zero")
+
+    def clean(self):
+        super().clean()
+        self.validate(self.source.name, self.destination.name, self.distance, ValidationError)
+
+    def save(
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None
+    ):
+        self.full_clean()
+        return super().save(
+            force_insert,
+            force_update,
+            using,
+            update_fields
+        )
+
     def __str__(self):
         return f"{self.source.name} - {self.destination.name}"
 
@@ -60,7 +89,31 @@ class Journey(models.Model):
     train = models.ForeignKey(Train, on_delete=models.CASCADE, related_name="journeys")
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
-    crew = models.ManyToManyField(Crew, related_name="journeys")
+    crews = models.ManyToManyField(Crew, related_name="journeys")
+
+    @staticmethod
+    def validate(departure_time: datetime, arrival_time: datetime, exception: Exception()) -> None:
+        if departure_time == arrival_time:
+            raise exception("departure_time and arrival_time cannot be the same")
+
+    def clean(self) -> None:
+        self.validate(self.departure_time, self.arrival_time, ValidationError)
+
+    def save(
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None
+    ):
+        self.full_clean()
+        return super().save(
+            force_insert,
+            force_update,
+            using,
+            update_fields
+        )
+
 
     def __str__(self):
         return (
@@ -88,6 +141,46 @@ class Ticket(models.Model):
         Journey, on_delete=models.CASCADE, related_name="tickets"
     )
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="tickets")
+
+    @staticmethod
+    def validate_ticket(cargo, seat, cinema_hall, error_to_raise):
+        for ticket_attr_value, ticket_attr_name, train_attr_name in [
+            (cargo, "cargo", "cargo_num"),
+            (seat, "seat", "places_in_cargo"),
+        ]:
+            count_attrs = getattr(cinema_hall, train_attr_name)
+            if not (1 <= ticket_attr_value <= count_attrs):
+                raise error_to_raise(
+                    {
+                        ticket_attr_name: f"{ticket_attr_name} "
+                                          f"number must be in available range: "
+                                          f"(1, {train_attr_name}): "
+                                          f"(1, {count_attrs})"
+                    }
+                )
+
+    def clean(self):
+        Ticket.validate_ticket(
+            self.cargo,
+            self.seat,
+            self.journey.train,
+            ValidationError,
+        )
+
+    def save(
+        self,
+        force_insert=False,
+        force_update=False,
+        using=None,
+        update_fields=None
+    ):
+        self.full_clean()
+        return super().save(
+            force_insert,
+            force_update,
+            using,
+            update_fields
+        )
 
     def __str__(self):
         return f"seat: {self.seat}, journey: {str(self.journey)}"
