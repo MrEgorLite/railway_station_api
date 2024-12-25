@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 
 from railway_station.models import TrainType, Train, Crew, Station, Route, Journey, Order, Ticket
 from railway_station.serializers import TrainSerializer, TrainTypeSerializer, CrewSerializer, StationSerializer, \
@@ -58,6 +58,14 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class TicketViewSet(viewsets.ModelViewSet):
+class TicketViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
+
+    def get_queryset(self):
+        orders = Order.objects.filter(user=self.request.user)
+        return Ticket.objects.filter(order__in=orders)
