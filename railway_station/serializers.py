@@ -76,10 +76,20 @@ class RouteListSerializer(serializers.ModelSerializer):
 
 
 class JourneySerializer(serializers.ModelSerializer):
+    tickets_available = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Journey
-        fields = ["id", "route", "train", "departure_time", "arrival_time", "crews"]
+        fields = [
+            "id",
+            "route",
+            "train",
+            "departure_time",
+            "arrival_time",
+            "crews",
+            "tickets_available"
+        ]
+        read_only_fields = ["id", "tickets_available"]
 
     def validate(self, attrs):
         Journey.validate(

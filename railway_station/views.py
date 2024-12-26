@@ -1,3 +1,4 @@
+from django.db.models import F, Count
 from django_rest.permissions import IsAdminUser, IsStaffUser, IsAuthenticated
 from rest_framework import viewsets, mixins
 
@@ -69,7 +70,12 @@ class RouteViewSet(viewsets.ModelViewSet):
 
 class JourneyViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
-    queryset = Journey.objects.all()
+    queryset = Journey.objects.annotate(
+        tickets_available=(
+            F("train__cargo_num") * F("train__places_in_cargo")
+            - Count("tickets")
+        )
+    )
     serializer_class = JourneySerializer
 
     def get_serializer_class(self):

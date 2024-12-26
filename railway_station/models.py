@@ -145,6 +145,10 @@ class Ticket(models.Model):
                         f"(1, {count_attrs})"
                     }
                 )
+            if Ticket.objects.filter(cargo=cargo, seat=seat).exists():
+                raise error_to_raise(
+                    "This place already taken"
+                )
 
     def clean(self):
         Ticket.validate_ticket(
