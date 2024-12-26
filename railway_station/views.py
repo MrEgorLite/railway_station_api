@@ -1,9 +1,28 @@
 from rest_framework import viewsets, mixins
 
-from railway_station.models import TrainType, Train, Crew, Station, Route, Journey, Order, Ticket
-from railway_station.serializers import TrainSerializer, TrainTypeSerializer, CrewSerializer, StationSerializer, \
-    RouteSerializer, JourneySerializer, OrderSerializer, TicketSerializer, TrainListSerializer, RouteListSerializer, \
-    JourneyListSerializer
+from railway_station.models import (
+    TrainType,
+    Train,
+    Crew,
+    Station,
+    Route,
+    Journey,
+    Order,
+    Ticket,
+)
+from railway_station.serializers import (
+    TrainSerializer,
+    TrainTypeSerializer,
+    CrewSerializer,
+    StationSerializer,
+    RouteSerializer,
+    JourneySerializer,
+    OrderSerializer,
+    TicketSerializer,
+    TrainListSerializer,
+    RouteListSerializer,
+    JourneyListSerializer,
+)
 
 
 class TrainTypeViewSet(viewsets.ModelViewSet):
@@ -49,6 +68,7 @@ class JourneyViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             return JourneyListSerializer
         return JourneySerializer
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()

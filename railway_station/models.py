@@ -55,7 +55,9 @@ class Route(models.Model):
     distance = models.IntegerField()
 
     @staticmethod
-    def validate(source: str, destination: str, distance: int, exception: Exception()) -> None:
+    def validate(
+        source: str, destination: str, distance: int, exception: Exception()
+    ) -> None:
         if source == destination:
             raise exception("source and destination routes cannot be the same")
         if distance <= 0:
@@ -63,22 +65,15 @@ class Route(models.Model):
 
     def clean(self):
         super().clean()
-        self.validate(self.source.name, self.destination.name, self.distance, ValidationError)
+        self.validate(
+            self.source.name, self.destination.name, self.distance, ValidationError
+        )
 
     def save(
-            self,
-            force_insert=False,
-            force_update=False,
-            using=None,
-            update_fields=None
+        self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         self.full_clean()
-        return super().save(
-            force_insert,
-            force_update,
-            using,
-            update_fields
-        )
+        return super().save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
         return f"{self.source.name} - {self.destination.name}"
@@ -92,7 +87,9 @@ class Journey(models.Model):
     crews = models.ManyToManyField(Crew, related_name="journeys")
 
     @staticmethod
-    def validate(departure_time: datetime, arrival_time: datetime, exception: Exception()) -> None:
+    def validate(
+        departure_time: datetime, arrival_time: datetime, exception: Exception()
+    ) -> None:
         if departure_time == arrival_time:
             raise exception("departure_time and arrival_time cannot be the same")
 
@@ -100,20 +97,10 @@ class Journey(models.Model):
         self.validate(self.departure_time, self.arrival_time, ValidationError)
 
     def save(
-            self,
-            force_insert=False,
-            force_update=False,
-            using=None,
-            update_fields=None
+        self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         self.full_clean()
-        return super().save(
-            force_insert,
-            force_update,
-            using,
-            update_fields
-        )
-
+        return super().save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
         return (
@@ -153,9 +140,9 @@ class Ticket(models.Model):
                 raise error_to_raise(
                     {
                         ticket_attr_name: f"{ticket_attr_name} "
-                                          f"number must be in available range: "
-                                          f"(1, {train_attr_name}): "
-                                          f"(1, {count_attrs})"
+                        f"number must be in available range: "
+                        f"(1, {train_attr_name}): "
+                        f"(1, {count_attrs})"
                     }
                 )
 
@@ -168,19 +155,10 @@ class Ticket(models.Model):
         )
 
     def save(
-        self,
-        force_insert=False,
-        force_update=False,
-        using=None,
-        update_fields=None
+        self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         self.full_clean()
-        return super().save(
-            force_insert,
-            force_update,
-            using,
-            update_fields
-        )
+        return super().save(force_insert, force_update, using, update_fields)
 
     def __str__(self):
         return f"seat: {self.seat}, journey: {str(self.journey)}"

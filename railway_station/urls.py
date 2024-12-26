@@ -9,7 +9,7 @@ from railway_station.views import (
     RouteViewSet,
     JourneyViewSet,
     OrderViewSet,
-    TicketViewSet
+    TicketViewSet,
 )
 
 app_name = "railway_station"
