@@ -1,5 +1,9 @@
+from datetime import datetime
+
 from django.db.models import F, Count
 from django_rest.permissions import IsAdminUser, IsStaffUser, IsAuthenticated
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
 
 from railway_station.models import (
@@ -69,19 +73,76 @@ class RouteViewSet(viewsets.ModelViewSet):
 
 
 class JourneyViewSet(viewsets.ModelViewSet):
+    queryset = Journey.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
-    queryset = Journey.objects.annotate(
-        tickets_available=(
-            F("train__cargo_num") * F("train__places_in_cargo")
-            - Count("tickets")
-        )
-    )
     serializer_class = JourneySerializer
 
+    def get_queryset(self):
+        queryset = Journey.objects.annotate(
+            tickets_available=(
+                F("train__cargo_num") * F("train__places_in_cargo")
+                - Count("tickets")
+            )
+        )
+        route_source = self.request.query_params.get("source")
+        route_destination = self.request.query_params.get("destination")
+
+        departure_time = self.request.query_params.get("departure_time")
+
+        arrival_time = self.request.query_params.get("arrival_time")
+
+        if route_source:
+            queryset = queryset.filter(route__source=route_source)
+
+        if route_destination:
+            queryset = queryset.filter(route__destination=route_destination)
+
+        if departure_time:
+            date = datetime.strptime(departure_time, "%Y-%m-%d").date()
+            queryset = queryset.filter(
+                departure_time__year=date.year,
+                departure_time__month=date.month,
+                departure_time__day=date.day
+            )
+
+        if arrival_time:
+            date = datetime.strptime(arrival_time, "%Y-%m-%d").date()
+            queryset = queryset.filter(
+                arrival__time__year=date.year,
+                arrival__time__month=date.month,
+                arrival__time__day=date.day
+            )
+
+        return queryset
     def get_serializer_class(self):
         if self.action == "list":
             return JourneyListSerializer
         return JourneySerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                type=OpenApiTypes.INT,
+                description="Filter by source id (ex. ?source=2)",
+            ),
+            OpenApiParameter(
+                "destination",
+                type=OpenApiTypes.INT,
+                description="Filter by destination id (ex. ?destination=2)",
+            ),
+            OpenApiParameter(
+                "departure_time",
+                description="Filter by departure_time id (ex. ?departure_time=2024-12-24)",
+            ),
+            OpenApiParameter(
+                "arrival_time",
+                description="Filter by arrival_time id (ex. ?arrival_time=2024-12-24)",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class OrderViewSet(viewsets.ModelViewSet):
