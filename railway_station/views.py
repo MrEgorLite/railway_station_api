@@ -1,3 +1,4 @@
+from django_rest.permissions import IsAdminUser, IsStaffUser, IsAuthenticated
 from rest_framework import viewsets, mixins
 
 from railway_station.models import (
@@ -10,6 +11,7 @@ from railway_station.models import (
     Order,
     Ticket,
 )
+from railway_station.permissions import IsAdminOrReadOnly
 from railway_station.serializers import (
     TrainSerializer,
     TrainTypeSerializer,
@@ -26,11 +28,13 @@ from railway_station.serializers import (
 
 
 class TrainTypeViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminUser, IsStaffUser)
     queryset = TrainType.objects.all()
     serializer_class = TrainTypeSerializer
 
 
 class TrainViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminUser, IsStaffUser)
     queryset = Train.objects.all()
     serializer_class = TrainSerializer
 
@@ -41,16 +45,19 @@ class TrainViewSet(viewsets.ModelViewSet):
 
 
 class CrewViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminUser, IsStaffUser)
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
 
 
 class StationViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminUser, IsStaffUser)
     queryset = Station.objects.all()
     serializer_class = StationSerializer
 
 
 class RouteViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminUser, IsStaffUser)
     queryset = Route.objects.all()
     serializer_class = RouteSerializer
 
@@ -61,6 +68,7 @@ class RouteViewSet(viewsets.ModelViewSet):
 
 
 class JourneyViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAdminOrReadOnly,)
     queryset = Journey.objects.all()
     serializer_class = JourneySerializer
 
@@ -71,6 +79,7 @@ class JourneyViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
@@ -83,6 +92,7 @@ class TicketViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
+    permission_classes = (IsAuthenticated,)
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
 
