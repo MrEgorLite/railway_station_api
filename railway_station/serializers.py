@@ -95,7 +95,7 @@ class JourneySerializer(serializers.ModelSerializer):
             "arrival_time",
             "crews",
             "tickets_available",
-            "taken_places"
+            "taken_places",
         ]
 
     def validate(self, attrs):
