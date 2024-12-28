@@ -28,7 +28,7 @@ from railway_station.serializers import (
     TicketSerializer,
     TrainListSerializer,
     RouteListSerializer,
-    JourneyListSerializer,
+    JourneyListSerializer, JourneyRetrieveSerializer,
 )
 
 
@@ -117,6 +117,9 @@ class JourneyViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "list":
             return JourneyListSerializer
+
+        if self.action == "retrieve":
+            return JourneyRetrieveSerializer
         return JourneySerializer
 
     @extend_schema(
