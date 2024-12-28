@@ -40,7 +40,7 @@ class TrainTypeViewSet(viewsets.ModelViewSet):
 
 class TrainViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminUser, IsStaffUser)
-    queryset = Train.objects.all()
+    queryset = Train.objects.select_related("train_type")
     serializer_class = TrainSerializer
 
     def get_serializer_class(self):
@@ -63,7 +63,7 @@ class StationViewSet(viewsets.ModelViewSet):
 
 class RouteViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminUser, IsStaffUser)
-    queryset = Route.objects.all()
+    queryset = Route.objects.select_related("source", "destination")
     serializer_class = RouteSerializer
 
     def get_serializer_class(self):
@@ -78,10 +78,25 @@ class JourneyViewSet(viewsets.ModelViewSet):
     serializer_class = JourneySerializer
 
     def get_queryset(self):
-        queryset = Journey.objects.annotate(
-            tickets_available=(
-                F("train__cargo_num") * F("train__places_in_cargo")
-                - Count("tickets")
+        queryset = (
+            Journey.objects
+            .select_related(
+                "train",
+                "train__train_type",
+                "route",
+                "route__source",
+                "route__destination",
+            )
+            .prefetch_related(
+                "tickets",
+                "crews",
+
+            )
+            .annotate(
+                tickets_available=(
+                    F("train__cargo_num") * F("train__places_in_cargo")
+                    - Count("tickets")
+                )
             )
         )
         route_source = self.request.query_params.get("source")
