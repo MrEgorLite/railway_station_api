@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "railway_station",
+    "user"
 ]
 
 MIDDLEWARE = [
@@ -136,3 +137,5 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=2),
 }
+
+AUTH_USER_MODEL = "user.User"
