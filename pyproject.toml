@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "railway-station-api"
+authors = ["Yehor Tsehelnyk"]
+description = "Railway station api"
+version = "1.0"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "5.1.4"
+djangorestframework = "3.15.2"
+djangorestframework-simplejwt = "5.3.1"
+drf-spectacular = "0.28.0"
+django-rest = "0.8.7"
+psycopg2-binary = "2.9.10"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

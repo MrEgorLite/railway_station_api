@@ -10,7 +10,7 @@ RUN apk add --no-cache jpeg-dev zlib-dev
 
 RUN apk add --no-cache --virtual .build-deps build-base linux-headers
 
-RUN pip install -r requirements.txt
+RUN pip install poetry
 
 COPY . .
 
@@ -18,5 +18,13 @@ RUN adduser \
         --disabled-password \
         --no-create-home \
         django-user
+   
+RUN mkdir /home/django-user
+
+RUN chown -R django-user /home/django-user
+
+RUN chmod -R 755 /home/django-user
 
 USER django-user
+
+RUN poetry install
