@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.db.models import F, Count
-from django_rest.permissions import IsAdminUser, IsStaffUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
@@ -28,18 +28,18 @@ from railway_station.serializers import (
     TicketSerializer,
     TrainListSerializer,
     RouteListSerializer,
-    JourneyListSerializer, JourneyRetrieveSerializer,
+    JourneyListSerializer, JourneyRetrieveSerializer, OrderListSerializer, TicketListSerializer,
 )
 
 
 class TrainTypeViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAdminUser, IsStaffUser)
+    permission_classes = (IsAdminUser,)
     queryset = TrainType.objects.all()
     serializer_class = TrainTypeSerializer
 
 
 class TrainViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAdminUser, IsStaffUser)
+    permission_classes = (IsAdminUser,)
     queryset = Train.objects.select_related("train_type")
     serializer_class = TrainSerializer
 
@@ -50,19 +50,19 @@ class TrainViewSet(viewsets.ModelViewSet):
 
 
 class CrewViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAdminUser, IsStaffUser)
+    permission_classes = (IsAdminUser,)
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
 
 
 class StationViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAdminUser, IsStaffUser)
+    permission_classes = (IsAdminUser,)
     queryset = Station.objects.all()
     serializer_class = StationSerializer
 
 
 class RouteViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAdminUser, IsStaffUser)
+    permission_classes = (IsAdminUser,)
     queryset = Route.objects.select_related("source", "destination")
     serializer_class = RouteSerializer
 
@@ -129,6 +129,7 @@ class JourneyViewSet(viewsets.ModelViewSet):
             )
 
         return queryset
+
     def get_serializer_class(self):
         if self.action == "list":
             return JourneyListSerializer
@@ -176,6 +177,11 @@ class OrderViewSet(
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return OrderListSerializer
+        return OrderSerializer
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
@@ -192,3 +198,8 @@ class TicketViewSet(
     def get_queryset(self):
         orders = Order.objects.filter(user=self.request.user)
         return Ticket.objects.filter(order__in=orders)
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return TicketListSerializer
+        return TicketSerializer

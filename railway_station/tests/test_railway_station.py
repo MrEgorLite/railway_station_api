@@ -11,7 +11,7 @@ from railway_station.models import (
     Route,
     Train,
     Crew,
-    Journey, Order,
+    Journey,
 )
 
 TRAIN_TYPES_URL = reverse("railway_station:traintype-list")
@@ -23,6 +23,7 @@ JOURNEYS_URL = reverse("railway_station:journey-list")
 ORDERS_URL = reverse("railway_station:order-list")
 TICKETS_URL = reverse("railway_station:ticket-list")
 
+
 class PermissionsTest(APITestCase):
     def setUp(self):
         self.admin_user = get_user_model().objects.create_superuser(
@@ -33,14 +34,27 @@ class PermissionsTest(APITestCase):
         )
         self.client = APIClient()
 
-        self.source_station = Station.objects.create(name="Source", latitude=12.34, longitude=56.78)
-        self.destination_station = Station.objects.create(name="Destination", latitude=23.45, longitude=67.89)
+        self.source_station = Station.objects.create(
+            name="Source",
+            latitude=12.34,
+            longitude=56.78
+        )
+        self.destination_station = Station.objects.create(
+            name="Destination",
+            latitude=23.45,
+            longitude=67.89
+        )
         self.route = Route.objects.create(
-            source=self.source_station, destination=self.destination_station, distance=100
+            source=self.source_station,
+            destination=self.destination_station,
+            distance=100
         )
         self.train_type = TrainType.objects.create(name="Passenger")
         self.train = Train.objects.create(
-            name="Express", cargo_num=2, places_in_cargo=50, train_type=self.train_type
+            name="Express",
+            cargo_num=2,
+            places_in_cargo=50,
+            train_type=self.train_type
         )
         self.crew = Crew.objects.create(first_name="John", last_name="Doe")
         self.journey = Journey.objects.create(
@@ -72,7 +86,14 @@ class PermissionsTest(APITestCase):
         response = self.client.patch(
             f"{JOURNEYS_URL}1/",
             {
-                "departure_time": datetime(2025,11,2,12,30,0)
+                "departure_time": datetime(
+                    2025,
+                    11,
+                    2,
+                    12,
+                    30,
+                    0
+                )
             }
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -80,14 +101,27 @@ class PermissionsTest(APITestCase):
 
 class JourneyViewSetTest(APITestCase):
     def setUp(self):
-        self.source_station = Station.objects.create(name="Source", latitude=12.34, longitude=56.78)
-        self.destination_station = Station.objects.create(name="Destination", latitude=23.45, longitude=67.89)
+        self.source_station = Station.objects.create(
+            name="Source",
+            latitude=12.34,
+            longitude=56.78
+        )
+        self.destination_station = Station.objects.create(
+            name="Destination",
+            latitude=23.45,
+            longitude=67.89
+        )
         self.route = Route.objects.create(
-            source=self.source_station, destination=self.destination_station, distance=100
+            source=self.source_station,
+            destination=self.destination_station,
+            distance=100
         )
         self.train_type = TrainType.objects.create(name="Passenger")
         self.train = Train.objects.create(
-            name="Express", cargo_num=2, places_in_cargo=50, train_type=self.train_type
+            name="Express",
+            cargo_num=2,
+            places_in_cargo=50,
+            train_type=self.train_type
         )
         self.crew = Crew.objects.create(first_name="John", last_name="Doe")
         self.journey = Journey.objects.create(
@@ -108,7 +142,9 @@ class JourneyViewSetTest(APITestCase):
         )
 
     def test_filter_journeys_by_source(self):
-        response = self.client.get(f"{JOURNEYS_URL}?source={self.source_station.id}")
+        response = self.client.get(
+            f"{JOURNEYS_URL}?source={self.source_station.id}"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
 
@@ -129,8 +165,16 @@ class RouteViewSetTest(APITestCase):
         )
         self.client = APIClient()
 
-        self.source = Station.objects.create(name="Source", latitude=12.34, longitude=56.78)
-        self.destination = Station.objects.create(name="Destination", latitude=23.45, longitude=67.89)
+        self.source = Station.objects.create(
+            name="Source",
+            latitude=12.34,
+            longitude=56.78
+        )
+        self.destination = Station.objects.create(
+            name="Destination",
+            latitude=23.45,
+            longitude=67.89
+        )
 
     def test_create_route_with_invalid_data(self):
         self.client.force_authenticate(self.admin_user)
@@ -153,16 +197,30 @@ class RouteViewSetTest(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+
 class OrderViewSetTest(APITestCase):
     def setUp(self):
-        self.source_station = Station.objects.create(name="Source", latitude=12.34, longitude=56.78)
-        self.destination_station = Station.objects.create(name="Destination", latitude=23.45, longitude=67.89)
+        self.source_station = Station.objects.create(
+            name="Source",
+            latitude=12.34,
+            longitude=56.78
+        )
+        self.destination_station = Station.objects.create(
+            name="Destination",
+            latitude=23.45,
+            longitude=67.89
+        )
         self.route = Route.objects.create(
-            source=self.source_station, destination=self.destination_station, distance=100
+            source=self.source_station,
+            destination=self.destination_station,
+            distance=100
         )
         self.train_type = TrainType.objects.create(name="Passenger")
         self.train = Train.objects.create(
-            name="Express", cargo_num=2, places_in_cargo=50, train_type=self.train_type
+            name="Express",
+            cargo_num=2,
+            places_in_cargo=50,
+            train_type=self.train_type
         )
         self.crew = Crew.objects.create(first_name="John", last_name="Doe")
         self.journey = Journey.objects.create(
@@ -212,16 +270,30 @@ class OrderViewSetTest(APITestCase):
         response = self.client.post(ORDERS_URL, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+
 class TicketViewSetTest(APITestCase):
     def setUp(self):
-        self.source_station = Station.objects.create(name="Source", latitude=12.34, longitude=56.78)
-        self.destination_station = Station.objects.create(name="Destination", latitude=23.45, longitude=67.89)
+        self.source_station = Station.objects.create(
+            name="Source",
+            latitude=12.34,
+            longitude=56.78
+        )
+        self.destination_station = Station.objects.create(
+            name="Destination",
+            latitude=23.45,
+            longitude=67.89
+        )
         self.route = Route.objects.create(
-            source=self.source_station, destination=self.destination_station, distance=100
+            source=self.source_station,
+            destination=self.destination_station,
+            distance=100
         )
         self.train_type = TrainType.objects.create(name="Passenger")
         self.train = Train.objects.create(
-            name="Express", cargo_num=2, places_in_cargo=50, train_type=self.train_type
+            name="Express",
+            cargo_num=2,
+            places_in_cargo=50,
+            train_type=self.train_type
         )
         self.crew = Crew.objects.create(first_name="John", last_name="Doe")
         self.journey = Journey.objects.create(
@@ -263,5 +335,3 @@ class TicketViewSetTest(APITestCase):
         self.client.force_authenticate(self.second_user)
         response = self.client.get(TICKETS_URL)
         self.assertEqual(len(response.data["results"]), 0)
-
-

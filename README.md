@@ -14,6 +14,16 @@
   - Everyone can view taken places in a journey.
 - **Filtering**: Query journeys based on route, departure, and arrival times.
 
+This project use JWT Token
+
+## Overview
+
+### The application provides functionality for:
+
+##### Managing trains, crews, stations, routes and journeys
+##### Managing routes for journeys.
+##### Creating and updating tickets and orders.
+
 ## Installation
 ```sh
 docker-compose build

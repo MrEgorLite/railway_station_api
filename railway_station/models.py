@@ -66,11 +66,18 @@ class Route(models.Model):
     def clean(self):
         super().clean()
         self.validate(
-            self.source.name, self.destination.name, self.distance, ValidationError
+            self.source.name,
+            self.destination.name,
+            self.distance,
+            ValidationError
         )
 
     def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_fields=None
     ):
         self.full_clean()
         return super().save(force_insert, force_update, using, update_fields)
@@ -80,24 +87,38 @@ class Route(models.Model):
 
 
 class Journey(models.Model):
-    route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name="journeys")
-    train = models.ForeignKey(Train, on_delete=models.CASCADE, related_name="journeys")
+    route = models.ForeignKey(
+        Route,
+        on_delete=models.CASCADE,
+        related_name="journeys"
+    )
+    train = models.ForeignKey(
+        Train,
+        on_delete=models.CASCADE,
+        related_name="journeys"
+    )
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
     crews = models.ManyToManyField(Crew, related_name="journeys")
 
     @staticmethod
     def validate(
-        departure_time: datetime, arrival_time: datetime, exception: Exception()
+        departure_time: datetime,
+        arrival_time: datetime,
+        exception: Exception()
     ) -> None:
         if departure_time == arrival_time:
-            raise exception("departure_time and arrival_time cannot be the same")
+            raise exception("departure and arrival time cannot be the same")
 
     def clean(self) -> None:
         self.validate(self.departure_time, self.arrival_time, ValidationError)
 
     def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
+        self,
+        force_insert=False,
+        force_update=False,
+        using=None,
+        update_fields=None
     ):
         self.full_clean()
         return super().save(force_insert, force_update, using, update_fields)
@@ -114,7 +135,9 @@ class Journey(models.Model):
 class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="orders"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="orders"
     )
 
     def __str__(self):
@@ -127,7 +150,11 @@ class Ticket(models.Model):
     journey = models.ForeignKey(
         Journey, on_delete=models.CASCADE, related_name="tickets"
     )
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="tickets")
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
 
     @staticmethod
     def validate_ticket(cargo, seat, cinema_hall, error_to_raise):
@@ -157,7 +184,11 @@ class Ticket(models.Model):
         )
 
     def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
+        self,
+        force_insert=False,
+        force_update=False,
+        using=None,
+        update_fields=None
     ):
         self.full_clean()
         return super().save(force_insert, force_update, using, update_fields)
