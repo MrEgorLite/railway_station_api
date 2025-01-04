@@ -10,6 +10,8 @@
 - **Ticket Booking**: Reserve seats in train journeys and ensure seat availability.
 - **Order Management**: Manage user orders for booked tickets.
 - **Authentication**: Secure endpoints for authenticated users and administrators.
+  - Users can only access their own orders and tickets.
+  - Everyone can view taken places in a journey.
 - **Filtering**: Query journeys based on route, departure, and arrival times.
 
 ## Installation
@@ -21,3 +23,13 @@ docker-compose build
 docker-compose up
 ```
 
+## images
+
+![alt text](images/1.png)
+![alt text](images/2.png)
+![alt text](images/3.png)
+![alt text](images/4.png)
+![alt text](images/5.png)
+![alt text](images/6.png)
+![alt text](images/7.png)
+![alt text](images/8.png)
