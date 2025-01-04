@@ -28,7 +28,10 @@ from railway_station.serializers import (
     TicketSerializer,
     TrainListSerializer,
     RouteListSerializer,
-    JourneyListSerializer, JourneyRetrieveSerializer, OrderListSerializer, TicketListSerializer,
+    JourneyListSerializer,
+    JourneyRetrieveSerializer,
+    OrderListSerializer,
+    TicketListSerializer,
 )
 
 
@@ -79,8 +82,7 @@ class JourneyViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = (
-            Journey.objects
-            .select_related(
+            Journey.objects.select_related(
                 "train",
                 "train__train_type",
                 "route",
@@ -90,7 +92,6 @@ class JourneyViewSet(viewsets.ModelViewSet):
             .prefetch_related(
                 "tickets",
                 "crews",
-
             )
             .annotate(
                 tickets_available=(
@@ -117,7 +118,7 @@ class JourneyViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(
                 departure_time__year=date.year,
                 departure_time__month=date.month,
-                departure_time__day=date.day
+                departure_time__day=date.day,
             )
 
         if arrival_time:
@@ -125,7 +126,7 @@ class JourneyViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(
                 arrival__time__year=date.year,
                 arrival__time__month=date.month,
-                arrival__time__day=date.day
+                arrival__time__day=date.day,
             )
 
         return queryset
@@ -168,7 +169,7 @@ class OrderViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     permission_classes = (IsAuthenticated,)
     queryset = Order.objects.all()

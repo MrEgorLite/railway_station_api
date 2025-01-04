@@ -58,7 +58,7 @@ class RouteSerializer(serializers.ModelSerializer):
             attrs["source"],
             attrs["destination"],
             attrs["distance"],
-            ValidationError
+            ValidationError,
         )
         return attrs
 
@@ -87,9 +87,7 @@ class TicketTakenSerializer(serializers.ModelSerializer):
 class JourneySerializer(serializers.ModelSerializer):
     tickets_available = serializers.IntegerField(read_only=True)
     taken_places = TicketTakenSerializer(
-        many=True,
-        read_only=True,
-        source="tickets"
+        many=True, read_only=True, source="tickets"
     )
 
     class Meta:
@@ -136,7 +134,7 @@ class TicketSerializer(serializers.ModelSerializer):
             attrs["cargo"],
             attrs["seat"],
             attrs["journey"].train,
-            ValidationError
+            ValidationError,
         )
         return attrs
 
@@ -160,6 +158,7 @@ class OrderSerializer(serializers.ModelSerializer):
             for ticket_data in tickets_data:
                 Ticket.objects.create(order=order, **ticket_data)
             return order
+
 
 class OrderListSerializer(OrderSerializer):
     tickets = TicketListSerializer(many=True)

@@ -69,15 +69,15 @@ class Route(models.Model):
             self.source.name,
             self.destination.name,
             self.distance,
-            ValidationError
+            ValidationError,
         )
 
     def save(
-            self,
-            force_insert=False,
-            force_update=False,
-            using=None,
-            update_fields=None
+        self,
+        force_insert=False,
+        force_update=False,
+        using=None,
+        update_fields=None,
     ):
         self.full_clean()
         return super().save(force_insert, force_update, using, update_fields)
@@ -88,14 +88,10 @@ class Route(models.Model):
 
 class Journey(models.Model):
     route = models.ForeignKey(
-        Route,
-        on_delete=models.CASCADE,
-        related_name="journeys"
+        Route, on_delete=models.CASCADE, related_name="journeys"
     )
     train = models.ForeignKey(
-        Train,
-        on_delete=models.CASCADE,
-        related_name="journeys"
+        Train, on_delete=models.CASCADE, related_name="journeys"
     )
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
@@ -105,7 +101,7 @@ class Journey(models.Model):
     def validate(
         departure_time: datetime,
         arrival_time: datetime,
-        exception: Exception()
+        exception: Exception(),
     ) -> None:
         if departure_time == arrival_time:
             raise exception("departure and arrival time cannot be the same")
@@ -118,7 +114,7 @@ class Journey(models.Model):
         force_insert=False,
         force_update=False,
         using=None,
-        update_fields=None
+        update_fields=None,
     ):
         self.full_clean()
         return super().save(force_insert, force_update, using, update_fields)
@@ -137,7 +133,7 @@ class Order(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="orders"
+        related_name="orders",
     )
 
     def __str__(self):
@@ -151,9 +147,7 @@ class Ticket(models.Model):
         Journey, on_delete=models.CASCADE, related_name="tickets"
     )
     order = models.ForeignKey(
-        Order,
-        on_delete=models.CASCADE,
-        related_name="tickets"
+        Order, on_delete=models.CASCADE, related_name="tickets"
     )
 
     @staticmethod
@@ -188,7 +182,7 @@ class Ticket(models.Model):
         force_insert=False,
         force_update=False,
         using=None,
-        update_fields=None
+        update_fields=None,
     ):
         self.full_clean()
         return super().save(force_insert, force_update, using, update_fields)

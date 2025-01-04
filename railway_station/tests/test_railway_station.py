@@ -35,26 +35,22 @@ class PermissionsTest(APITestCase):
         self.client = APIClient()
 
         self.source_station = Station.objects.create(
-            name="Source",
-            latitude=12.34,
-            longitude=56.78
+            name="Source", latitude=12.34, longitude=56.78
         )
         self.destination_station = Station.objects.create(
-            name="Destination",
-            latitude=23.45,
-            longitude=67.89
+            name="Destination", latitude=23.45, longitude=67.89
         )
         self.route = Route.objects.create(
             source=self.source_station,
             destination=self.destination_station,
-            distance=100
+            distance=100,
         )
         self.train_type = TrainType.objects.create(name="Passenger")
         self.train = Train.objects.create(
             name="Express",
             cargo_num=2,
             places_in_cargo=50,
-            train_type=self.train_type
+            train_type=self.train_type,
         )
         self.crew = Crew.objects.create(first_name="John", last_name="Doe")
         self.journey = Journey.objects.create(
@@ -85,16 +81,7 @@ class PermissionsTest(APITestCase):
         self.client.force_authenticate(user=self.normal_user)
         response = self.client.patch(
             f"{JOURNEYS_URL}1/",
-            {
-                "departure_time": datetime(
-                    2025,
-                    11,
-                    2,
-                    12,
-                    30,
-                    0
-                )
-            }
+            {"departure_time": datetime(2025, 11, 2, 12, 30, 0)},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -102,26 +89,22 @@ class PermissionsTest(APITestCase):
 class JourneyViewSetTest(APITestCase):
     def setUp(self):
         self.source_station = Station.objects.create(
-            name="Source",
-            latitude=12.34,
-            longitude=56.78
+            name="Source", latitude=12.34, longitude=56.78
         )
         self.destination_station = Station.objects.create(
-            name="Destination",
-            latitude=23.45,
-            longitude=67.89
+            name="Destination", latitude=23.45, longitude=67.89
         )
         self.route = Route.objects.create(
             source=self.source_station,
             destination=self.destination_station,
-            distance=100
+            distance=100,
         )
         self.train_type = TrainType.objects.create(name="Passenger")
         self.train = Train.objects.create(
             name="Express",
             cargo_num=2,
             places_in_cargo=50,
-            train_type=self.train_type
+            train_type=self.train_type,
         )
         self.crew = Crew.objects.create(first_name="John", last_name="Doe")
         self.journey = Journey.objects.create(
@@ -166,25 +149,17 @@ class RouteViewSetTest(APITestCase):
         self.client = APIClient()
 
         self.source = Station.objects.create(
-            name="Source",
-            latitude=12.34,
-            longitude=56.78
+            name="Source", latitude=12.34, longitude=56.78
         )
         self.destination = Station.objects.create(
-            name="Destination",
-            latitude=23.45,
-            longitude=67.89
+            name="Destination", latitude=23.45, longitude=67.89
         )
 
     def test_create_route_with_invalid_data(self):
         self.client.force_authenticate(self.admin_user)
         response = self.client.post(
             ROTES_URL,
-            {
-                "source": self.source,
-                "destination": self.source,
-                "distance": 1
-            }
+            {"source": self.source, "destination": self.source, "distance": 1},
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         response = self.client.post(
@@ -192,8 +167,8 @@ class RouteViewSetTest(APITestCase):
             {
                 "source": self.source,
                 "destination": self.destination,
-                "distance": -1
-            }
+                "distance": -1,
+            },
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -201,26 +176,22 @@ class RouteViewSetTest(APITestCase):
 class OrderViewSetTest(APITestCase):
     def setUp(self):
         self.source_station = Station.objects.create(
-            name="Source",
-            latitude=12.34,
-            longitude=56.78
+            name="Source", latitude=12.34, longitude=56.78
         )
         self.destination_station = Station.objects.create(
-            name="Destination",
-            latitude=23.45,
-            longitude=67.89
+            name="Destination", latitude=23.45, longitude=67.89
         )
         self.route = Route.objects.create(
             source=self.source_station,
             destination=self.destination_station,
-            distance=100
+            distance=100,
         )
         self.train_type = TrainType.objects.create(name="Passenger")
         self.train = Train.objects.create(
             name="Express",
             cargo_num=2,
             places_in_cargo=50,
-            train_type=self.train_type
+            train_type=self.train_type,
         )
         self.crew = Crew.objects.create(first_name="John", last_name="Doe")
         self.journey = Journey.objects.create(
@@ -249,7 +220,7 @@ class OrderViewSetTest(APITestCase):
                     }
                 ]
             },
-            format="json"
+            format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -274,26 +245,22 @@ class OrderViewSetTest(APITestCase):
 class TicketViewSetTest(APITestCase):
     def setUp(self):
         self.source_station = Station.objects.create(
-            name="Source",
-            latitude=12.34,
-            longitude=56.78
+            name="Source", latitude=12.34, longitude=56.78
         )
         self.destination_station = Station.objects.create(
-            name="Destination",
-            latitude=23.45,
-            longitude=67.89
+            name="Destination", latitude=23.45, longitude=67.89
         )
         self.route = Route.objects.create(
             source=self.source_station,
             destination=self.destination_station,
-            distance=100
+            distance=100,
         )
         self.train_type = TrainType.objects.create(name="Passenger")
         self.train = Train.objects.create(
             name="Express",
             cargo_num=2,
             places_in_cargo=50,
-            train_type=self.train_type
+            train_type=self.train_type,
         )
         self.crew = Crew.objects.create(first_name="John", last_name="Doe")
         self.journey = Journey.objects.create(
@@ -325,7 +292,7 @@ class TicketViewSetTest(APITestCase):
                     }
                 ]
             },
-            format="json"
+            format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 

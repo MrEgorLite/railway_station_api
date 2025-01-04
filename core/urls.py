@@ -20,17 +20,14 @@ from django.urls import path, include
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
-    SpectacularRedocView
+    SpectacularRedocView,
 )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path(
         "api/v1/station/",
-        include(
-            "railway_station.urls",
-            namespace="railway_station"
-        )
+        include("railway_station.urls", namespace="railway_station"),
     ),
     path("api/v1/account/", include("user.urls", namespace="user")),
     path("api/v1/schema/", SpectacularAPIView.as_view(), name="schema"),
