@@ -3,14 +3,14 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from railway_station.models import (
-    TrainType,
-    Train,
     Crew,
-    Station,
-    Route,
     Journey,
     Order,
+    Route,
+    Station,
     Ticket,
+    Train,
+    TrainType
 )
 
 

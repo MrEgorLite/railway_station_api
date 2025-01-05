@@ -3,15 +3,15 @@ from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APIClient, APITestCase
 
 from railway_station.models import (
-    TrainType,
-    Station,
-    Route,
-    Train,
     Crew,
     Journey,
+    Route,
+    Station,
+    Train,
+    TrainType
 )
 
 TRAIN_TYPES_URL = reverse("railway_station:traintype-list")

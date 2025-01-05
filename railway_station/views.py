@@ -1,37 +1,37 @@
 from datetime import datetime
 
-from django.db.models import F, Count
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from django.db.models import Count, F
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import viewsets, mixins
+from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework import mixins, viewsets
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from railway_station.models import (
-    TrainType,
-    Train,
     Crew,
-    Station,
-    Route,
     Journey,
     Order,
+    Route,
+    Station,
     Ticket,
+    Train,
+    TrainType
 )
 from railway_station.permissions import IsAdminOrReadOnly
 from railway_station.serializers import (
-    TrainSerializer,
-    TrainTypeSerializer,
     CrewSerializer,
-    StationSerializer,
-    RouteSerializer,
-    JourneySerializer,
-    OrderSerializer,
-    TicketSerializer,
-    TrainListSerializer,
-    RouteListSerializer,
     JourneyListSerializer,
     JourneyRetrieveSerializer,
+    JourneySerializer,
     OrderListSerializer,
+    OrderSerializer,
+    RouteListSerializer,
+    RouteSerializer,
+    StationSerializer,
     TicketListSerializer,
+    TicketSerializer,
+    TrainListSerializer,
+    TrainSerializer,
+    TrainTypeSerializer
 )
 
 

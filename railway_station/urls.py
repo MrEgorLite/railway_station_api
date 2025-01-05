@@ -1,14 +1,14 @@
 from rest_framework import routers
 
 from railway_station.views import (
-    TrainTypeViewSet,
-    TrainViewSet,
     CrewViewSet,
-    StationViewSet,
-    RouteViewSet,
     JourneyViewSet,
     OrderViewSet,
+    RouteViewSet,
+    StationViewSet,
     TicketViewSet,
+    TrainTypeViewSet,
+    TrainViewSet
 )
 
 app_name = "railway_station"
