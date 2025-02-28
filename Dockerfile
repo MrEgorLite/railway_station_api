@@ -27,4 +27,4 @@ RUN chmod -R 755 /home/django-user
 
 USER django-user
 
-RUN poetry install
+RUN poetry install --no-root
