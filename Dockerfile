@@ -12,19 +12,15 @@ RUN apk add --no-cache --virtual .build-deps build-base linux-headers
 
 RUN pip install poetry
 
-COPY . .
-
 RUN adduser \
         --disabled-password \
-        --no-create-home \
+        --home "/home/django-user" \
         django-user
-   
-RUN mkdir /home/django-user
-
-RUN chown -R django-user /home/django-user
-
-RUN chmod -R 755 /home/django-user
 
 USER django-user
 
+COPY pyproject.toml poetry.lock ./
+
 RUN poetry install --no-root
+
+COPY . .
